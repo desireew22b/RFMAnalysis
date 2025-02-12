@@ -10,16 +10,16 @@ def read_zip_csv(zip_path, csv_filename):
         with z.open(csv_filename) as f:
             return pd.read_csv(f)
 
-# Paths to files (Modify these accordingly)
-zip_path = "online+sales.zip"      # Replace with actual ZIP file path
-csv_filename = "supermarket_sales.csv" # Name of CSV inside ZIP
-csv_path = "file2.csv"     # Another CSV file outside ZIP
+# Paths to files 
+zip_path = "online+sales.zip"      
+csv_filename = "supermarket_sales.csv" 
+csv_path = "file2.csv"    
 
 # Read data from ZIP and CSV files
 df_zip = read_zip_csv(zip_path, csv_filename)
 df_csv = pd.read_csv(csv_path)
 
-# Merge/Concatenate Data (Modify as needed)
+# Merge/Concatenate Data 
 merged_df = pd.concat([df_zip, df_csv])
 
 # Display Data
