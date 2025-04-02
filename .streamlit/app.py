@@ -586,22 +586,22 @@ def main():
         recommendations = {
            
             "Loyal Customers": [
-                "tip 1",
-                "tip 2",
-                "tip 3",
-                "tip 4"
+                "Give early access to sales",
+                "Exclusive discounts and other personalized experiences to shopw appreciation",
+                "Upgrade them to a card with higher limit",
+                "Consider brand deal (depending on influence)"
             ],
             "New Customers": [
-                 "tip 1",
-                "tip 2",
-                "tip 3",
-                "tip 4"
+                 "Encourage credit card application",
+                "Offer a coupon for free shipping with first online purchase",
+                "Encourage application download by explaining rewards program potential",
+                "Register them for emails"
             ],
             "At Risk": [
-                "tip 1",
-                "tip 2",
-                "tip 3",
-                "tip 4"
+                "Send surveys to identify qualms",
+                "Incentivize them to come back with exclusive promotions",
+                "Send promotional emails on your products making them more desirable",
+                "Follow up on most recent purchases to inquire about product satisfaction"
             ],
             
         }
