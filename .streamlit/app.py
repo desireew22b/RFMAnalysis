@@ -12,6 +12,8 @@ from datetime import datetime
 # Set page config at the very beginning
 st.set_page_config(page_title="RFM Analysis Dashboard", page_icon="📊", layout="wide")
 
+# No database engine needed, we'll work with files directly
+
 # Function to display the logo
 def display_logo():
     # Use Streamlit's columns to position the logo
@@ -195,13 +197,27 @@ def main():
             st.session_state["username"] = None
             # Use rerun
             st.rerun()
-
-    try:
-        df = load_data()
-    except Exception as e:
-        st.error(f"Error loading data: {e}")
-        st.error("Please make sure 'supermarket_sales.csv' exists in the current directory.")
-        st.stop()
+    
+    # Add upload file functionality
+    uploaded_file = st.sidebar.file_uploader("Upload your customer data CSV", type=["csv"])
+    if uploaded_file:
+        try:
+            df = pd.read_csv(uploaded_file)
+            df['Date'] = pd.to_datetime(df['Date'])
+            # Save the uploaded file locally (optional)
+            # with open('uploaded_data.csv', 'wb') as f:
+            #     f.write(uploaded_file.getvalue())
+            st.sidebar.success("Upload Successful")
+        except Exception as e:
+            st.sidebar.error(f"Error uploading file: {e}")
+            df = load_data()
+    else:
+        try:
+            df = load_data()
+        except Exception as e:
+            st.error(f"Error loading data: {e}")
+            st.error("Please make sure 'supermarket_sales.csv' exists in the current directory.")
+            st.stop()
 
     # Title and description
     st.title("📊 RFM Analysis Dashboard")
