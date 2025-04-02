@@ -12,6 +12,15 @@ from datetime import datetime
 # Set page config at the very beginning
 st.set_page_config(page_title="RFM Analysis Dashboard", page_icon="📊", layout="wide")
 
+# Function to display the logo
+def display_logo():
+    # Use Streamlit's columns to position the logo
+    cols = st.columns([1, 3])
+    with cols[0]:
+        # Display a placeholder image using st.image with a URL or local path
+        # You can replace this URL with your own logo image path
+        st.image("/Users/desiree/Desktop/Screen Shot 2025-03-03 at 7.44.49 PM.png", width=150)
+
 # Create a file to store user credentials if it doesn't exist
 def initialize_users():
     if not os.path.exists("users.pkl"):
@@ -80,6 +89,9 @@ def load_data():
 
 # Authentication pages
 def auth_page():
+    # Display logo at the top of the auth page
+    st.image("/Users/desiree/Desktop/Screen Shot 2025-03-03 at 7.44.49 PM.png", width=200)
+    
     st.title("RFM Analysis Dashboard")
     
     # Add custom CSS
@@ -172,6 +184,9 @@ def auth_page():
 
 # Main application function
 def main():
+    # Display logo in the top left corner of the main page
+    display_logo()
+    
     # Add logout button to sidebar
     if st.session_state.get("authenticated", False):
         st.sidebar.title(f"Welcome, {st.session_state['username']}!")
