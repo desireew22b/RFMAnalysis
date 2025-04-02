@@ -365,7 +365,7 @@ def main():
     rfm['Segment'] = rfm.apply(assign_segment, axis=1)
 
     # Create dashboard tabs
-    tab1, tab2, tab3, tab4 = st.tabs(["Dashboard", "Data Explorer", "Customer Segments", "New Customers"])
+    tab1, tab2, tab3 = st.tabs(["Dashboard", "Data Explorer", "Customer Segments"])
     
     with tab1:
         # Calculate and display metrics
@@ -493,43 +493,90 @@ def main():
         segment_metrics['Avg Purchase Frequency'] = segment_metrics['Avg Purchase Frequency'].round(1)
         segment_metrics['Avg Spend ($)'] = segment_metrics['Avg Spend ($)'].round(2)
         
+        # Add "New Customers" to the segment options if not already there
+        segment_options = segment_metrics['Segment'].tolist()
+        if 'New Customers' not in segment_options:
+            segment_options.append('New Customers')
+            
         # Display segment details
         selected_segment = st.selectbox(
             "Select Customer Segment to Analyze",
-            options=segment_metrics['Segment'].tolist()
+            options=segment_options
         )
         
-        # Display segment info
-        segment_data = segment_metrics[segment_metrics['Segment'] == selected_segment].iloc[0]
-        
-        st.markdown(f"### {selected_segment}")
-        st.markdown(f"**Description**: {segment_descriptions.get(selected_segment, 'No description available')}")
+        # Check if we need to handle New Customers separately
+        if selected_segment == 'New Customers' and 'New Customers' not in segment_metrics['Segment'].values:
+            # Filter for only new customers (1-2 purchases)
+            new_customers = rfm[rfm['Frequency'] <= 2]
+            
+            # Calculate basic metrics for New Customers
+            new_customers_count = len(new_customers)
+            avg_recency = np.mean(new_customers['Recency']) if len(new_customers) > 0 else 0
+            avg_frequency = np.mean(new_customers['Frequency']) if len(new_customers) > 0 else 0
+            avg_monetary = np.mean(new_customers['Monetary']) if len(new_customers) > 0 else 0
+            
+            st.markdown(f"### {selected_segment}")
+            st.markdown(f"**Description**: {segment_descriptions.get(selected_segment, 'Customers who purchased recently but not made many purchases as yet')}")
+        else:
+            # Display regular segment info
+            segment_data = segment_metrics[segment_metrics['Segment'] == selected_segment].iloc[0]
+            
+            st.markdown(f"### {selected_segment}")
+            st.markdown(f"**Description**: {segment_descriptions.get(selected_segment, 'No description available')}")
         
         # Metrics for the selected segment
         metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4)
         
-        with metric_col1:
-            st.metric("Number of Customers", int(segment_data['Count']))
-        
-        with metric_col2:
-            st.metric("Avg Days Since Purchase", segment_data['Avg Days Since Purchase'])
-        
-        with metric_col3:
-            st.metric("Avg Purchase Frequency", segment_data['Avg Purchase Frequency'])
-        
-        with metric_col4:
-            st.metric("Avg Spend ($)", f"${segment_data['Avg Spend ($)']}")
+        if selected_segment == 'New Customers' and 'New Customers' not in segment_metrics['Segment'].values:
+            # Show metrics for new customers
+            with metric_col1:
+                st.metric("Number of Customers", new_customers_count)
+            
+            with metric_col2:
+                st.metric("Avg Days Since Purchase", f"{avg_recency:.2f} days")
+            
+            with metric_col3:
+                st.metric("Avg Purchase Frequency", f"{avg_frequency:.2f}")
+            
+            with metric_col4:
+                st.metric("Avg Spend ($)", f"${avg_monetary:.2f}")
+        else:
+            # Show regular segment metrics
+            with metric_col1:
+                st.metric("Number of Customers", int(segment_data['Count']))
+            
+            with metric_col2:
+                st.metric("Avg Days Since Purchase", segment_data['Avg Days Since Purchase'])
+            
+            with metric_col3:
+                st.metric("Avg Purchase Frequency", segment_data['Avg Purchase Frequency'])
+            
+            with metric_col4:
+                st.metric("Avg Spend ($)", f"${segment_data['Avg Spend ($)']}")
         
         # RFM Distribution for the segment
         try:
-            segment_rfm = rfm[rfm['Segment'] == selected_segment]
-            
-            fig_box = go.Figure()
-            fig_box.add_trace(go.Box(y=segment_rfm['Recency'], name="Recency"))
-            fig_box.add_trace(go.Box(y=segment_rfm['Frequency'], name="Frequency"))
-            fig_box.add_trace(go.Box(y=segment_rfm['Monetary'], name="Monetary"))
-            fig_box.update_layout(title=f"Distribution of RFM Metrics for {selected_segment}")
-            st.plotly_chart(fig_box, use_container_width=True)
+            if selected_segment == 'New Customers' and 'New Customers' not in segment_metrics['Segment'].values:
+                # Show distribution for new customers
+                if len(new_customers) > 0:
+                    fig_box = go.Figure()
+                    fig_box.add_trace(go.Box(y=new_customers['Recency'], name="Recency"))
+                    fig_box.add_trace(go.Box(y=new_customers['Frequency'], name="Frequency"))
+                    fig_box.add_trace(go.Box(y=new_customers['Monetary'], name="Monetary"))
+                    fig_box.update_layout(title=f"Distribution of RFM Metrics for {selected_segment}")
+                    st.plotly_chart(fig_box, use_container_width=True)
+                else:
+                    st.warning("No new customers found in the current data selection.")
+            else:
+                # Show regular segment distribution
+                segment_rfm = rfm[rfm['Segment'] == selected_segment]
+                
+                fig_box = go.Figure()
+                fig_box.add_trace(go.Box(y=segment_rfm['Recency'], name="Recency"))
+                fig_box.add_trace(go.Box(y=segment_rfm['Frequency'], name="Frequency"))
+                fig_box.add_trace(go.Box(y=segment_rfm['Monetary'], name="Monetary"))
+                fig_box.update_layout(title=f"Distribution of RFM Metrics for {selected_segment}")
+                st.plotly_chart(fig_box, use_container_width=True)
         except Exception as e:
             st.error(f"Error creating box plot: {e}")
         
@@ -563,66 +610,33 @@ def main():
         
         for i, rec in enumerate(segment_recommendations, 1):
             st.markdown(f"**{i}. {rec}**")
-    
-    # New Customers Tab
-    with tab4:
-        st.subheader("New Customers Analysis")
-        
-        # Filter for only new customers (1-2 purchases)
-        new_customers = rfm[rfm['Frequency'] <= 2]
-        
-        # Calculate basic metrics
-        new_customers_count = len(new_customers)
-        average_recency = np.mean(new_customers['Recency']) if len(new_customers) > 0 else 0
-        average_frequency = np.mean(new_customers['Frequency']) if len(new_customers) > 0 else 0
-        average_monetary = np.mean(new_customers['Monetary']) if len(new_customers) > 0 else 0
-
-        # Display metrics
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Total New Customers", new_customers_count)
-        col2.metric("Average Recency", f"{average_recency:.2f} days")
-        col3.metric("Average Frequency", f"{average_frequency:.2f} purchases")
-        col4.metric("Average Monetary", f"${average_monetary:.2f}")
-        
-        # RFM Distribution for new customers
-        try:
-            if len(new_customers) > 0:
-                st.subheader("RFM Distribution for New Customers")
-                
-                fig_box = go.Figure()
-                fig_box.add_trace(go.Box(y=new_customers['Recency'], name="Recency"))
-                fig_box.add_trace(go.Box(y=new_customers['Frequency'], name="Frequency"))
-                fig_box.add_trace(go.Box(y=new_customers['Monetary'], name="Monetary"))
-                fig_box.update_layout(title="Distribution of RFM Metrics for New Customers")
-                st.plotly_chart(fig_box, use_container_width=True)
-            else:
-                st.warning("No new customers found in the current data selection.")
-        except Exception as e:
-            st.error(f"Error creating box plot: {e}")
-        
-        # New customer data table
-        st.subheader("New Customer Data")
-        
-        if len(new_customers) > 0:
-            # Display the first 50 rows as HTML
-            rfm_html = new_customers.head(50).to_html(index=False)
-            st.markdown(rfm_html, unsafe_allow_html=True)
             
-            # Export options
-            st.subheader("Export Data")
-            try:
-                csv_data = new_customers.to_csv(index=False).encode('utf-8')
-                st.download_button(
-                    "Download New Customer Data",
-                    csv_data,
-                    "new_customers_data.csv",
-                    "text/csv",
-                    key='download_new_customer_button'
-                )
-            except Exception as e:
-                st.error(f"Error creating download button: {e}")
-        else:
-            st.info("No new customer data available to display.")
+        # Add data table and export option for New Customers
+        if selected_segment == 'New Customers' and 'New Customers' not in segment_metrics['Segment'].values:
+            st.subheader("New Customer Data")
+            
+            if len(new_customers) > 0:
+                # Display the first 50 rows as HTML
+                rfm_html = new_customers.head(50).to_html(index=False)
+                st.markdown(rfm_html, unsafe_allow_html=True)
+                
+                # Export options
+                st.subheader("Export Data")
+                try:
+                    csv_data = new_customers.to_csv(index=False).encode('utf-8')
+                    st.download_button(
+                        "Download New Customer Data",
+                        csv_data,
+                        "new_customers_data.csv",
+                        "text/csv",
+                        key='download_new_customer_button'
+                    )
+                except Exception as e:
+                    st.error(f"Error creating download button: {e}")
+            else:
+                st.info("No new customer data available to display.")
+    
+
 
 # Initialize users database
 initialize_users()
