@@ -365,7 +365,7 @@ def main():
     rfm['Segment'] = rfm.apply(assign_segment, axis=1)
 
     # Create dashboard tabs
-    tab1, tab2, tab3 = st.tabs(["Dashboard", "Data Explorer", "Customer Segments"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Dashboard", "Data Explorer", "Customer Segments", "About"])
     
     with tab1:
         # Calculate and display metrics
@@ -635,6 +635,27 @@ def main():
                     st.error(f"Error creating download button: {e}")
             else:
                 st.info("No new customer data available to display.")
+
+# About Tab
+    with tab4:
+        st.title("About RFM Analysis")
+        st.markdown("""
+        This section provides information about RFM analysis, its benefits, and how to use this dashboard.
+        """)
+        
+        # Create expandable sections for each category
+        with st.expander("What is RFM Analysis?"):
+            st.markdown("*Fill in details about what RFM analysis is and how it works...*")
+        
+        with st.expander("Benefits of RFM Segmentation"):
+            st.markdown("*Fill in details about the benefits of using RFM for customer segmentation...*")
+        
+        with st.expander("How to Interpret RFM Scores"):
+            st.markdown("*Fill in details about how to interpret the RFM scores and segments...*")
+        
+        with st.expander("How This Application Drives Business Success"):
+            st.markdown("*Fill in details about how this dashboard helps implement RFM analysis for business growth and success...*")
+    
     
 
 
