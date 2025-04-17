@@ -645,17 +645,33 @@ def main():
         
         # Create expandable sections for each category
         with st.expander("What is RFM Analysis?"):
-            st.markdown("*Fill in details about what RFM analysis is and how it works...*")
-        
+             st.markdown("""
+            The RFM Analysis System categorizes customers based on: Recency (R): How recently a customer made a purchase. Frequency (F): How often a customer makes purchases. Monetary Value (M): How much a customer spends. Traditional segmentation approaches, such as demographic and geographic segmentation, fail to capture the complexities of customer behavior. Demographic data is the data that segments customers based on the attributes like age, gender, income, etc. Attributes like these are useful for identifying the border, more general trends. The geographical segmentation in-of-itself is even more simple, focusing on location-specific patterns but disregarding the nuances of the singular customer. Marketing for customers in a complex and intricate system, and solely focusing on demographic/geographical segmentation could, and often does, result in ineffective marketing techniques.
+            """)
+
         with st.expander("Benefits of RFM Segmentation"):
-            st.markdown("*Fill in details about the benefits of using RFM for customer segmentation...*")
-        
+            st.markdown("""
+            An RFM (Recency, Frequency, Monetary) analysis system solves this by segmenting customers based on recency (the customers purchasing habits), frequency (specifically how recently they've made a purchase), and monetary (how often they buy, and how much they spend). This approach allows businesses to identify high-value customers, those at risk of churning, and occasional buyers who could be encouraged to spend more allowing a company to directly refine marketing strategies. This RFM system will allow us to provide an accessible and user-friendly tool that automates customer segmentation which in turn can help businesses focus on valuable customers, save time on manual data analysis, and create personalized marketing strategies. Unlike traditional methods, our system is designed to be accessible, requiring minimal technical expertise, so that companies of all sizes can benefit from behavior-based customer insights.
+            """)
+
         with st.expander("How to Interpret RFM Scores"):
-            st.markdown("*Fill in details about how to interpret the RFM scores and segments...*")
-        
-        with st.expander("How This Application Drives Business Success"):
-            st.markdown("*Fill in details about how this dashboard helps implement RFM analysis for business growth and success...*")
+            st.markdown("""
+            By automating the RFM analysis process, businesses can quickly identify customer groups, including VIPs, at-risk customers, and dormant buyers. Since some companies don't have the resources or knowledge on how to manually perform RFM analysis, our system will address this need by streamlining RFM scoring and making the insights easier to understand through the use of visual dashboards. It must properly calculate RFM data with high accuracy and normalize and categorize scores into customer segments accurately and efficiently. This allows store owners to identify which products have better customer retention so they can pour more into that area and hopefully see more profit in return. Regional managers can compare the categorizations of customer segments across all stores to then see which tactics are proving to be most successful and implement them across other locations.
+            This system interprets RFM scores on a 1-4 scale:
+            - Recency (1-4): 4 = very recent purchase, 1 = purchase long ago
+            - Frequency (1-4): 4 = frequent purchaser, 1 = one-time buyer
+            - Monetary (1-4): 4 = high spender, 1 = low spender
     
+            Customer segment rfm scores:
+            - Loyal (R:4, F:4, M:4): Best customers who purchase recently, frequently, and spend the most
+            - At Risk (R:1, F:3-4, M:3-4): Previously valuable customers who haven't purchased recently
+            - New Customers (R:4, F:1, M:1-4): First-time buyers
+            
+            """)
+
+        with st.expander("How This Application Drives Business Success"):
+            st.markdown(""" Our system allows us to address the gaps in traditional segmentation methods using practicality and transformivity. We come across the issue posed by the approaches that are more one-size-fits all and outdated in order to understand the dynamics of the customer base. This system leverages behavior-based metrics and scalable technology, in turn enabling businesses to optimize customer segmentation, improve retention strategies, and drive informed decision-making. This system automates what used to be an overly-complex process, saves time, and ensures accuracy and scalability in order to create the flexibility and potential needed to adapt to real-world business needs. By adopting the RFM analysis system, businesses will have an opportunity to gain both a useful tool, and something more that's crucial to success. Graining precisions, clarity and an understanding of how to make 'smarter' decisions in order for businesses to create a meaningful, lasting relationship with their customers all through the improvement of customer segmentation.
+            """)
     
 
 
